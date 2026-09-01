@@ -51,7 +51,7 @@ public class ForbiddenItemsManager {
         return FORBIDDEN_ITEMS.containsKey(playerUUID) && FORBIDDEN_ITEMS.get(playerUUID).contains(itemName);
     }
 
-    // Método para salvar os dados no arquivo
+    // Metodo para salvar os dados no arquivo
     public static void save() {
         try (FileWriter writer = new FileWriter(FILE)) {
             GSON.toJson(FORBIDDEN_ITEMS, writer);
@@ -60,7 +60,7 @@ public class ForbiddenItemsManager {
         }
     }
 
-    // Método para ler os dados do arquivo
+    // Metodo para ler os dados do arquivo
     public static void load() {
         if (FILE.exists()) {
             try (FileReader reader = new FileReader(FILE)) {
