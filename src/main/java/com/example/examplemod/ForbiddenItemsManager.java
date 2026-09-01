@@ -3,6 +3,7 @@ package com.example.examplemod;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,13 +29,17 @@ public class ForbiddenItemsManager {
     private static final File FILE = FMLPaths.CONFIGDIR.get().resolve("itens_proibidos.json").toFile();
 
     public static void forbidItem(UUID playerUUID, Item item) {
-        String itemName = ForgeRegistries.ITEMS.getKey(item).toString();
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(item);
+        if (key == null) return;
+        String itemName = key.toString();
         FORBIDDEN_ITEMS.computeIfAbsent(playerUUID, k -> new HashSet<>()).add(itemName);
         save(); // Salva toda vez que uma alteração é feita
     }
 
     public static void allowItem(UUID playerUUID, Item item) {
-        String itemName = ForgeRegistries.ITEMS.getKey(item).toString();
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(item);
+        if (key == null) return;
+        String itemName = key.toString();
         if (FORBIDDEN_ITEMS.containsKey(playerUUID)) {
             FORBIDDEN_ITEMS.get(playerUUID).remove(itemName);
             
@@ -47,7 +52,9 @@ public class ForbiddenItemsManager {
     }
 
     public static boolean isForbidden(UUID playerUUID, Item item) {
-        String itemName = ForgeRegistries.ITEMS.getKey(item).toString();
+        ResourceLocation key = ForgeRegistries.ITEMS.getKey(item);
+        if (key == null) return false;
+        String itemName = key.toString();
         return FORBIDDEN_ITEMS.containsKey(playerUUID) && FORBIDDEN_ITEMS.get(playerUUID).contains(itemName);
     }
 
