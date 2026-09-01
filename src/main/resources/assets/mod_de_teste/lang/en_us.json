@@ -1,0 +1,33 @@
+{
+  "command.mod_de_teste.heal.success": "%s player(s) have been healed.",
+  "command.mod_de_teste.heal.self": "You have been healed!",
+
+  "command.mod_de_teste.trash.title": "Trash",
+
+  "command.mod_de_teste.freeze.frozen": "§cYou have been frozen!",
+  "command.mod_de_teste.freeze.success": "%s player(s) have been frozen.",
+  "command.mod_de_teste.unfreeze.unfrozen": "§aYou have been unfrozen!",
+  "command.mod_de_teste.unfreeze.success": "%s player(s) have been unfrozen.",
+
+  "command.mod_de_teste.mute.muted": "§cYou have been muted on the server!",
+  "command.mod_de_teste.mute.success": "%s player(s) have been muted.",
+  "command.mod_de_teste.unmute.unmuted": "§aYou have been unmuted!",
+  "command.mod_de_teste.unmute.success": "%s player(s) have been unmuted.",
+
+  "command.mod_de_teste.ignore.ignored": "§eYou are now ignoring messages from %s.",
+  "command.mod_de_teste.ignore.unignored": "§aYou are no longer ignoring %s.",
+
+  "command.mod_de_teste.forbid.success": "§cItem %s has been forbidden for %s player(s).",
+  "command.mod_de_teste.allow.success": "§aItem %s is now allowed for %s player(s).",
+
+  "command.mod_de_teste.announcement": "§e[Announcement] §f%s",
+
+  "command.mod_de_teste.afk.pending": "§eStarting AFK mode... Stand still for 5 seconds.",
+  "command.mod_de_teste.afk.active": "§aAFK mode activated! You are invulnerable, immovable and ignored by monsters. Move your camera or press SHIFT to exit.",
+  "command.mod_de_teste.afk.cancel_move": "§cAFK mode deactivated due to movement.",
+  "command.mod_de_teste.afk.cancel_pending": "§cAFK countdown cancelled due to movement.",
+  "command.mod_de_teste.afk.already": "§eYou are already AFK!",
+
+  "command.mod_de_teste.event.muted": "§cYou are muted and cannot speak.",
+  "command.mod_de_teste.event.frozen_break": "§cYou cannot break blocks while frozen!"
+}

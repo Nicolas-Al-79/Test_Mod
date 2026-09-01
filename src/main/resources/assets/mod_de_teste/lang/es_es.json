@@ -1,0 +1,33 @@
+{
+  "command.mod_de_teste.heal.success": "%s jugador(es) han sido curados.",
+  "command.mod_de_teste.heal.self": "¡Has sido curado!",
+
+  "command.mod_de_teste.trash.title": "Papelera",
+
+  "command.mod_de_teste.freeze.frozen": "§c¡Has sido congelado!",
+  "command.mod_de_teste.freeze.success": "%s jugador(es) han sido congelados.",
+  "command.mod_de_teste.unfreeze.unfrozen": "§a¡Has sido descongelado!",
+  "command.mod_de_teste.unfreeze.success": "%s jugador(es) han sido descongelados.",
+
+  "command.mod_de_teste.mute.muted": "§c¡Has sido silenciado en el servidor!",
+  "command.mod_de_teste.mute.success": "%s jugador(es) han sido silenciados.",
+  "command.mod_de_teste.unmute.unmuted": "§a¡Has sido dessilenciado!",
+  "command.mod_de_teste.unmute.success": "%s jugador(es) han sido dessilenciados.",
+
+  "command.mod_de_teste.ignore.ignored": "§eAhora estás ignorando los mensajes de %s.",
+  "command.mod_de_teste.ignore.unignored": "§aYa no estás ignorando a %s.",
+
+  "command.mod_de_teste.forbid.success": "§cEl ítem %s ha sido prohibido para %s jugador(es).",
+  "command.mod_de_teste.allow.success": "§aEl ítem %s ahora está permitido para %s jugador(es).",
+
+  "command.mod_de_teste.announcement": "§e[Anuncio] §f%s",
+
+  "command.mod_de_teste.afk.pending": "§eIniciando modo AFK... Quédate quieto por 5 segundos.",
+  "command.mod_de_teste.afk.active": "§a¡Modo AFK activado! Eres invulnerable, inamovible e ignorado por los monstruos. Mueve la cámara o presiona SHIFT para salir.",
+  "command.mod_de_teste.afk.cancel_move": "§cModo AFK desactivado por movimiento.",
+  "command.mod_de_teste.afk.cancel_pending": "§cConteo de AFK cancelado por movimiento.",
+  "command.mod_de_teste.afk.already": "§e¡Ya estás en modo AFK!",
+
+  "command.mod_de_teste.event.muted": "§cEstás silenciado y no puedes hablar.",
+  "command.mod_de_teste.event.frozen_break": "§c¡No puedes romper bloques mientras estás congelado!"
+}

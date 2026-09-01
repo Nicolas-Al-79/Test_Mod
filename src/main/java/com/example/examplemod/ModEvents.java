@@ -1,0 +1,154 @@
+package com.example.examplemod;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber(modid = "mod_de_teste")
+public class ModEvents {
+
+    @SubscribeEvent
+    public static void onPickupItem(EntityItemPickupEvent event) {
+        Player player = event.getEntity();
+        ItemStack itemStack = event.getItem().getItem();
+
+        if (ForbiddenItemsManager.isForbidden(player.getUUID(), itemStack.getItem())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.side.isServer() && event.phase == TickEvent.Phase.END) {
+            Player player = event.player;
+
+            // Checa os itens proibidos no inventário
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+
+                if (!stack.isEmpty() && ForbiddenItemsManager.isForbidden(player.getUUID(), stack.getItem())) {
+                    player.getInventory().removeItemNoUpdate(i);
+                    player.drop(stack, false, true);
+                }
+            }
+
+            // Checa se o jogador está congelado e aplica as poções que bloqueiam movimento
+            if (PunishmentManager.isFrozen(player.getUUID())) {
+                // Lentidão absurdamente alta e cansaço (para não quebrar nada com a mão livre)
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 2, 255, false, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 2, 255, false, false, false));
+                // Jump Boost alto e negativo no código base paralisa o pulo
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 2, 250, false, false, false));
+            }
+
+            // Checa se ele está em modo AFK (para ver se ele se moveu ou para ativá-lo)
+            AFKManager.checkMovement((ServerPlayer) player);
+        }
+    }
+
+    // ----------------------------------------------------
+    // NOVOS EVENTOS PARA PUNIÇÕES E UTILIDADES
+    // ----------------------------------------------------
+
+    // Mute do Servidor
+    @SubscribeEvent
+    public static void onServerChat(ServerChatEvent event) {
+        if (PunishmentManager.isMuted(event.getPlayer().getUUID())) {
+            event.setCanceled(true);
+            event.getPlayer().sendSystemMessage(Component.translatable("command.mod_de_teste.event.muted"));
+        }
+    }
+
+    // Mute Local (Client) - Ignorar
+    @SubscribeEvent
+    public static void onClientChatReceived(ClientChatReceivedEvent event) {
+        if (event.getSender() != null) {
+            for (String ignored : IgnoreManager.IGNORED_PLAYERS) {
+                if (event.getMessage().getString().toLowerCase().contains(ignored.toLowerCase())) {
+                    event.setCanceled(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    // Congelar - Impedir de quebrar blocos (server-side)
+    @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (event.getLevel().isClientSide()) return; // segurança extra
+        if (PunishmentManager.isFrozen(event.getPlayer().getUUID())) {
+            event.setCanceled(true);
+            event.getPlayer().sendSystemMessage(
+                    Component.translatable("command.mod_de_teste.event.frozen_break")
+            );
+        }
+    }
+
+    // Congelar - Impedir interação (seja específico com os subtipos)
+    @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getLevel().isClientSide()) return;
+        if (PunishmentManager.isFrozen(event.getEntity().getUUID())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getLevel().isClientSide()) return;
+        if (PunishmentManager.isFrozen(event.getEntity().getUUID())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        if (event.getLevel().isClientSide()) return;
+        if (PunishmentManager.isFrozen(event.getEntity().getUUID())) {
+            event.setCanceled(true);
+        }
+    }
+
+    // AFK - Cancelar Dano
+    @SubscribeEvent
+    public static void onLivingDamage(LivingDamageEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (AFKManager.isAFK(player.getUUID())) {
+                event.setCanceled(true); // Cancela qualquer dano se estiver AFK
+            }
+        }
+    }
+
+    // AFK - Cancelar Knockback (repulsão) de ataques e explosões
+    @SubscribeEvent
+    public static void onLivingKnockBack(LivingKnockBackEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (AFKManager.isAFK(player.getUUID())) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    // AFK - Fazer com que os mobs ignorem o jogador
+    @SubscribeEvent
+    public static void onLivingChangeTarget(net.minecraftforge.event.entity.living.LivingChangeTargetEvent event) {
+        if (event.getNewTarget() instanceof ServerPlayer player) {
+            if (AFKManager.isAFK(player.getUUID())) {
+                event.setCanceled(true); // Cancela o target, fazendo o mob não atacar
+            }
+        }
+    }
+}
