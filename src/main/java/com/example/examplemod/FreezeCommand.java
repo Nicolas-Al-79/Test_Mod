@@ -18,7 +18,7 @@ public class FreezeCommand {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
 
                             for (ServerPlayer player : players) {
-                                PunishmentManager.setFrozen(player.serverLevel(),player.getUUID(), true);
+                                PunishmentManager.setFrozen(player, true);
                                 player.sendSystemMessage(Component.translatable("command.mod_de_teste.freeze.frozen"));
                             }
 
@@ -37,7 +37,7 @@ public class FreezeCommand {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
 
                             for (ServerPlayer player : players) {
-                                PunishmentManager.setFrozen(player.serverLevel(),player.getUUID(), false);
+                                PunishmentManager.setFrozen(player, false);
                                 player.sendSystemMessage(Component.translatable("command.mod_de_teste.unfreeze.unfrozen"));
                             }
 

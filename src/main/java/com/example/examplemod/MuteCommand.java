@@ -18,7 +18,7 @@ public class MuteCommand {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
 
                             for (ServerPlayer player : players) {
-                                PunishmentManager.setMuted(player.serverLevel(),player.getUUID(), true);
+                                PunishmentManager.setMuted(player, true);
                                 player.sendSystemMessage(Component.translatable("command.mod_de_teste.mute.muted"));
                             }
 
@@ -37,7 +37,7 @@ public class MuteCommand {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
 
                             for (ServerPlayer player : players) {
-                                PunishmentManager.setMuted(player.serverLevel(),player.getUUID(), false);
+                                PunishmentManager.setMuted(player, false);
                                 player.sendSystemMessage(Component.translatable("command.mod_de_teste.unmute.unmuted"));
                             }
 
