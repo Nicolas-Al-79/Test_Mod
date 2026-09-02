@@ -1,5 +1,6 @@
 package com.example.examplemod;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PunishmentManager {
@@ -9,9 +10,9 @@ public class PunishmentManager {
 
     /*** Define se o jogador está congelado.*/
     public static void setFrozen(ServerPlayer player, boolean frozen) {
-        player.getPersistentData()
-                .getCompound(NBT_KEY)
-                .putBoolean(FROZEN_KEY, frozen);
+        CompoundTag data = player.getPersistentData().getCompound(NBT_KEY);
+        data.putBoolean(FROZEN_KEY, frozen);
+        player.getPersistentData().put(NBT_KEY, data);
     }
 
     /*** Verifica se o jogador está congelado.*/
@@ -23,9 +24,9 @@ public class PunishmentManager {
 
     /*** Define se o jogador está mutado.*/
     public static void setMuted(ServerPlayer player, boolean muted) {
-        player.getPersistentData()
-                .getCompound(NBT_KEY)
-                .putBoolean(MUTED_KEY, muted);
+        CompoundTag data = player.getPersistentData().getCompound(NBT_KEY);
+        data.putBoolean(MUTED_KEY, muted);
+        player.getPersistentData().put(NBT_KEY, data);
     }
 
     /*** Verifica se o jogador está mutado.*/
