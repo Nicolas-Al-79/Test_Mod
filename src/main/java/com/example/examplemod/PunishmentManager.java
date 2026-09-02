@@ -17,9 +17,7 @@ public class PunishmentManager {
 
     /*** Verifica se o jogador está congelado.*/
     public static boolean isFrozen(ServerPlayer player) {
-        return player.getPersistentData()
-                .getCompound(NBT_KEY)
-                .getBoolean(FROZEN_KEY);
+        return player.getPersistentData().getCompound(NBT_KEY).getBoolean(FROZEN_KEY);
     }
 
     /*** Define se o jogador está mutado.*/
@@ -31,8 +29,6 @@ public class PunishmentManager {
 
     /*** Verifica se o jogador está mutado.*/
     public static boolean isMuted(ServerPlayer player) {
-        return player.getPersistentData()
-                .getCompound(NBT_KEY)
-                .getBoolean(MUTED_KEY);
+        return player.getPersistentData().getCompound(NBT_KEY).getBoolean(MUTED_KEY);
     }
 }
