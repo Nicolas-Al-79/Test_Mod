@@ -46,7 +46,7 @@ public class ModEvents {
             }
 
             // Checa se o jogador está congelado e aplica as poções que bloqueiam movimento
-            if (PunishmentManager.isFrozen(player.getUUID())) {
+            if (PunishmentManager.isFrozen(((ServerPlayer) player).serverLevel(),player.getUUID())) {
                 // Lentidão absurdamente alta e cansaço (para não quebrar nada com a mão livre)
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 2, 255, false, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 2, 255, false, false, false));
@@ -66,7 +66,7 @@ public class ModEvents {
     // Mute do Servidor
     @SubscribeEvent
     public static void onServerChat(ServerChatEvent event) {
-        if (PunishmentManager.isMuted(event.getPlayer().getUUID())) {
+        if (PunishmentManager.isMuted(event.getPlayer().serverLevel(),event.getPlayer().getUUID())) {
             event.setCanceled(true);
             event.getPlayer().sendSystemMessage(Component.translatable("command.mod_de_teste.event.muted"));
         }
@@ -89,7 +89,8 @@ public class ModEvents {
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (event.getLevel().isClientSide()) return; // segurança extra
-        if (PunishmentManager.isFrozen(event.getPlayer().getUUID())) {
+        ServerPlayer player = (ServerPlayer) event.getPlayer();
+        if (PunishmentManager.isFrozen(player.serverLevel(),player.getUUID())) {
             event.setCanceled(true);
             event.getPlayer().sendSystemMessage(
                     Component.translatable("command.mod_de_teste.event.frozen_break")
@@ -101,7 +102,8 @@ public class ModEvents {
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getLevel().isClientSide()) return;
-        if (PunishmentManager.isFrozen(event.getEntity().getUUID())) {
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        if (PunishmentManager.isFrozen(player.serverLevel(),player.getUUID())) {
             event.setCanceled(true);
         }
     }
@@ -109,7 +111,8 @@ public class ModEvents {
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getLevel().isClientSide()) return;
-        if (PunishmentManager.isFrozen(event.getEntity().getUUID())) {
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        if (PunishmentManager.isFrozen(player.serverLevel(),player.getUUID())) {
             event.setCanceled(true);
         }
     }
@@ -117,7 +120,8 @@ public class ModEvents {
     @SubscribeEvent
     public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         if (event.getLevel().isClientSide()) return;
-        if (PunishmentManager.isFrozen(event.getEntity().getUUID())) {
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        if (PunishmentManager.isFrozen(player.serverLevel(),player.getUUID())) {
             event.setCanceled(true);
         }
     }

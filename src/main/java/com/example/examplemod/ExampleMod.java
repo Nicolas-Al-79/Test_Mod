@@ -114,9 +114,6 @@ public class ExampleMod
         // Carrega os itens proibidos salvos no arquivo JSON quando o mundo/servidor ligar
         ForbiddenItemsManager.load();
         
-        // Carrega as punições (mute/freeze) salvas
-        PunishmentManager.load();
-        
         // Carrega a lista de jogadores ignorados localmente
         IgnoreManager.load();
     }

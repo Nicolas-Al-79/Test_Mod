@@ -1,81 +1,178 @@
 package com.example.examplemod;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.fml.loading.FMLPaths;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class PunishmentManager{
+public class PunishmentManager extends SavedData {
+
     private static final String ID = "punishments_test";
 
-    public static final Set<UUID> MUTED_PLAYERS = new HashSet<>();
-    public static final Set<UUID> FROZEN_PLAYERS = new HashSet<>();
+    private static final String MUTED_KEY = "muted";
+    private static final String FROZEN_KEY = "frozen";
+    private static final String UUID_KEY = "UUID";
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File FILE = FMLPaths.CONFIGDIR.get().resolve("punicoes.json").toFile();
+    private final Set<UUID> mutedPlayers = new HashSet<>();
+    private final Set<UUID> frozenPlayers = new HashSet<>();
 
-    public static void setMuted(UUID uuid, boolean muted) {
-        if (muted) MUTED_PLAYERS.add(uuid);
-        else MUTED_PLAYERS.remove(uuid);
-        save();
+    private PunishmentManager() {
     }
 
-    public static boolean isMuted(UUID uuid) {
-        return MUTED_PLAYERS.contains(uuid);
+    /*** Obtém o SavedData correspondente ao mapa.*
+     * Independentemente da dimensão em que o jogador esteja,
+     * os dados são armazenados no Overworld do mapa atual.*/
+    private static PunishmentManager get(ServerLevel level) {
+
+        ServerLevel overworld = level.getServer().overworld();
+
+        return overworld.getDataStorage().computeIfAbsent(
+                PunishmentManager::load,
+                PunishmentManager::new,
+                ID
+        );
     }
 
-    public static void setFrozen(UUID uuid, boolean frozen) {
-        if (frozen) FROZEN_PLAYERS.add(uuid);
-        else FROZEN_PLAYERS.remove(uuid);
-        save();
-    }
+    /**
+     * Define se um jogador está mutado.
+     */
+    public static void setMuted(ServerLevel level, UUID uuid, boolean muted) {
 
-    public static boolean isFrozen(UUID uuid) {
-        return FROZEN_PLAYERS.contains(uuid);
-    }
+        PunishmentManager data = get(level);
 
-    public static void save() {
-        try (FileWriter writer = new FileWriter(FILE)) {
-            Map<String, Set<UUID>> data = new HashMap<>();
-            data.put("muted", MUTED_PLAYERS);
-            data.put("frozen", FROZEN_PLAYERS);
-            GSON.toJson(data, writer);
-        } catch (Exception e) {
-            System.out.println("Erro ao salvar punicoes.json: " + e.getMessage());
+        if (muted) {
+            data.mutedPlayers.add(uuid);
+        } else {
+            data.mutedPlayers.remove(uuid);
         }
+
+        data.setDirty();
     }
 
-    public static void load() {
-        if (FILE.exists()) {
-            try (FileReader reader = new FileReader(FILE)) {
-                Type type = new TypeToken<Map<String, Set<UUID>>>() {}.getType();
-                Map<String, Set<UUID>> data = GSON.fromJson(reader, type);
-                
-                if (data != null) {
-                    MUTED_PLAYERS.clear();
-                    FROZEN_PLAYERS.clear();
-                    if (data.containsKey("muted")) MUTED_PLAYERS.addAll(data.get("muted"));
-                    if (data.containsKey("frozen")) FROZEN_PLAYERS.addAll(data.get("frozen"));
-                }
-            } catch (Exception e) {
-                System.out.println("Erro ao carregar punicoes.json: " + e.getMessage());
+    /**
+     * Verifica se um jogador está mutado.
+     */
+    public static boolean isMuted(ServerLevel level, UUID uuid) {
+        return get(level).mutedPlayers.contains(uuid);
+    }
+
+    /**
+     * Define se um jogador está congelado.
+     */
+    public static void setFrozen(ServerLevel level, UUID uuid, boolean frozen) {
+
+        PunishmentManager data = get(level);
+
+        if (frozen) {
+            data.frozenPlayers.add(uuid);
+        } else {
+            data.frozenPlayers.remove(uuid);
+        }
+
+        data.setDirty();
+    }
+
+    /**
+     * Verifica se um jogador está congelado.
+     */
+    public static boolean isFrozen(ServerLevel level, UUID uuid) {
+        return get(level).frozenPlayers.contains(uuid);
+    }
+
+    /**
+     * Carrega os dados do arquivo .dat.
+     */
+    private static PunishmentManager load(CompoundTag tag) {
+
+        PunishmentManager data = new PunishmentManager();
+
+        /*
+         * Carrega os jogadores mutados.
+         */
+        ListTag muted = tag.getList(
+                MUTED_KEY,
+                Tag.TAG_COMPOUND
+        );
+
+        for (Tag entry : muted) {
+
+            if (entry instanceof CompoundTag uuidTag
+                    && uuidTag.hasUUID(UUID_KEY)) {
+
+                data.mutedPlayers.add(
+                        uuidTag.getUUID(UUID_KEY)
+                );
             }
         }
+
+        /*
+         * Carrega os jogadores congelados.
+         */
+        ListTag frozen = tag.getList(
+                FROZEN_KEY,
+                Tag.TAG_COMPOUND
+        );
+
+        for (Tag entry : frozen) {
+
+            if (entry instanceof CompoundTag uuidTag
+                    && uuidTag.hasUUID(UUID_KEY)) {
+
+                data.frozenPlayers.add(
+                        uuidTag.getUUID(UUID_KEY)
+                );
+            }
+        }
+
+        return data;
+    }
+
+    /**
+     * Salva os dados no formato NBT.
+     */
+    @Override
+    public CompoundTag save(CompoundTag tag) {
+
+        /*
+         * Salva os jogadores mutados.
+         */
+        ListTag muted = new ListTag();
+
+        for (UUID uuid : mutedPlayers) {
+
+            muted.add(
+                    NbtUtils.createUUID(uuid)
+            );
+        }
+
+        tag.put(
+                MUTED_KEY,
+                muted
+        );
+
+        /*
+         * Salva os jogadores congelados.
+         */
+        ListTag frozen = new ListTag();
+
+        for (UUID uuid : frozenPlayers) {
+
+            frozen.add(
+                    NbtUtils.createUUID(uuid)
+            );
+        }
+
+        tag.put(
+                FROZEN_KEY,
+                frozen
+        );
+
+        return tag;
     }
 }
