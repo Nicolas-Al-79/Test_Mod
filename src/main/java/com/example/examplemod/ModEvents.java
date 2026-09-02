@@ -82,12 +82,10 @@ public class ModEvents {
     // Mute Local (Client) - Ignorar
     @SubscribeEvent
     public static void onClientChatReceived(ClientChatReceivedEvent event) {
-        if (event.getSender() != null) {
-            for (String ignored : IgnoreManager.IGNORED_PLAYERS) {
-                if (event.getMessage().getString().toLowerCase().contains(ignored.toLowerCase())) {
-                    event.setCanceled(true);
-                    break;
-                }
+        for (String ignored : IgnoreManager.IGNORED_PLAYERS) {
+            if (event.getMessage().getString().toLowerCase().contains(ignored.toLowerCase())) {
+                event.setCanceled(true);
+                break;
             }
         }
     }
