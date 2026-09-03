@@ -39,55 +39,70 @@ public class ExampleMod
     }
 
     @SubscribeEvent
-    public void registrarComandos(RegisterCommandsEvent event)
-    {
-        // Comando de anúncio
-        event.getDispatcher().register(
-                Commands.literal("announcement")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.argument(
-                                "mensagem",
-                                StringArgumentType.greedyString()
-                        ).executes(context -> {
-                            String mensagem = StringArgumentType.getString(
-                                    context,
-                                    "mensagem"
-                            );
+    public void registrarComandos(RegisterCommandsEvent event) {
+        if (Config.COMMAND_ANNOUNCEMENT_ENABLED.get()) {
+            // Announcement
+            event.getDispatcher().register(
+                    Commands.literal("announcement")
+                            .requires(source -> source.hasPermission(Config.COMMAND_ANNOUNCEMENT_PERMISSION_LEVEL.get()))
+                            .then(Commands.argument(
+                                    "mensagem",
+                                    StringArgumentType.greedyString()
+                            ).executes(context -> {
+                                String mensagem = StringArgumentType.getString(
+                                        context,
+                                        "mensagem"
+                                );
 
-                            Component texto = Component.translatable(
-                                    "command.mod_de_teste.announcement",
-                                    mensagem
-                            );
+                                Component texto = Component.translatable(
+                                        "command.mod_de_teste.announcement",
+                                        mensagem
+                                );
 
-                            context.getSource().getServer().getPlayerList()
-                                    .broadcastSystemMessage(texto, false);
+                                context.getSource().getServer().getPlayerList()
+                                        .broadcastSystemMessage(texto, false);
 
-                            return 1;
-                        }))
-        );
+                                return 1;
+                            }))
+            );
+        }
 
-        // Comando de proibir/permitir itens
-        ForbidCommand.register(
-                event.getDispatcher(),
-                event.getBuildContext()
-        );
+        // Forbid / Allow
+        if (Config.COMMAND_FORBID_ENABLED.get()) {
+            ForbidCommand.register(
+                    event.getDispatcher(),
+                    event.getBuildContext()
+            );
+        }
 
-        // Curar jogadores
-        HealCommand.register(event.getDispatcher());
+        // Heal
+        if (Config.COMMAND_HEAL_ENABLED.get()) {
+            HealCommand.register(event.getDispatcher());
+        }
 
-        // Lixeira
-        TrashCommand.register(event.getDispatcher());
+        // Trash
+        if (Config.COMMAND_TRASH_ENABLED.get()) {
+            TrashCommand.register(event.getDispatcher());
+        }
 
-        // Congelar / Descongelar
-        FreezeCommand.register(event.getDispatcher());
+        // Freeze
+        if (Config.COMMAND_FREEZE_ENABLED.get()) {
+            FreezeCommand.register(event.getDispatcher());
+        }
 
-        // Mutar / Desmutar
-        MuteCommand.register(event.getDispatcher());
+        // Mute
+        if (Config.COMMAND_MUTE_ENABLED.get()) {
+            MuteCommand.register(event.getDispatcher());
+        }
 
-        // Ignorar / Designorar
-        IgnoreCommand.register(event.getDispatcher());
+        // Ignore
+        if (Config.COMMAND_IGNORE_ENABLED.get()) {
+            IgnoreCommand.register(event.getDispatcher());
+        }
 
         // AFK
-        AFKCommand.register(event.getDispatcher());
+        if (Config.COMMAND_AFK_ENABLED.get()) {
+            AFKCommand.register(event.getDispatcher());
+        }
     }
 }

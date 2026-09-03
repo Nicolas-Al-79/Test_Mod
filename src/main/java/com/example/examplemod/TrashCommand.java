@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.ChestMenu;
 public class TrashCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("trash")
+                .requires(source -> source.hasPermission(Config.COMMAND_TRASH_PERMISSION_LEVEL.get()))
                 .executes(context -> {
                     ServerPlayer player = context.getSource().getPlayerOrException();
 

@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 public class IgnoreCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("ignore")
+                .requires(source -> source.hasPermission(Config.COMMAND_IGNORE_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("jogador", StringArgumentType.string())
                         .executes(context -> {
                             String playerName = StringArgumentType.getString(context, "jogador");
@@ -24,6 +25,7 @@ public class IgnoreCommand {
         );
 
         dispatcher.register(Commands.literal("unignore")
+                .requires(source -> source.hasPermission(Config.COMMAND_IGNORE_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("jogador", StringArgumentType.string())
                         .executes(context -> {
                             String playerName = StringArgumentType.getString(context, "jogador");

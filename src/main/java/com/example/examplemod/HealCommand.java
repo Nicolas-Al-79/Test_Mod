@@ -12,7 +12,7 @@ import java.util.Collection;
 public class HealCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("heal")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_HEAL_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .executes(context -> {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");

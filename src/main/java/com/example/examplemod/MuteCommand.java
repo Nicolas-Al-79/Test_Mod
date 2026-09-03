@@ -12,7 +12,7 @@ import java.util.Collection;
 public class MuteCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("mute")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_MUTE_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .executes(context -> {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
@@ -31,7 +31,7 @@ public class MuteCommand {
         );
 
         dispatcher.register(Commands.literal("unmute")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_MUTE_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .executes(context -> {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");

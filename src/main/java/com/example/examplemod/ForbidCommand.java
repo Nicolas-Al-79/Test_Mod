@@ -17,7 +17,7 @@ public class ForbidCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
 
         dispatcher.register(Commands.literal("forbid")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_FORBID_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .then(Commands.argument("item", ItemArgument.item(buildContext))
                                 .executes(context -> {
@@ -39,7 +39,7 @@ public class ForbidCommand {
         );
 
         dispatcher.register(Commands.literal("allow")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_FORBID_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .then(Commands.argument("item", ItemArgument.item(buildContext))
                                 .executes(context -> {

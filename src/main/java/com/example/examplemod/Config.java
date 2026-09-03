@@ -1,64 +1,80 @@
 package com.example.examplemod;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-// An example config class. This is not required, but it's a good idea to have one to keep your config organized.
-// Demonstrates how to use Forge's config APIs
 @Mod.EventBusSubscriber(modid = ExampleMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config
 {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    private static final ForgeConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER
-            .comment("Whether to log the dirt block on common setup")
-            .define("logDirtBlock", true);
+    // ----------------------------------------------------
+    // COMMANDS
+    // ----------------------------------------------------
 
-    private static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER
-            .comment("A magic number")
-            .defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
+    public static final ForgeConfigSpec.BooleanValue COMMAND_ANNOUNCEMENT_ENABLED = BUILDER
+            .comment("Enables or disables the /announcement command")
+            .define("commands.announcement.enabled", true);
 
-    public static final ForgeConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER
-            .comment("What you want the introduction message to be for the magic number")
-            .define("magicNumberIntroduction", "The magic number is... ");
+    public static final ForgeConfigSpec.IntValue COMMAND_ANNOUNCEMENT_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /announcement. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.announcement.permission_level", 2, 0, 4);
 
-    // a list of strings that are treated as resource locations for items
-    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER
-            .comment("A list of items to log on common setup.")
-            .defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), Config::validateItemName);
+    public static final ForgeConfigSpec.BooleanValue COMMAND_FORBID_ENABLED = BUILDER
+            .comment("Enables or disables the /forbid and /allow commands")
+            .define("commands.forbid.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_FORBID_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /forbid and /allow. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.forbid.permission_level", 3, 0, 4);
+
+    public static final ForgeConfigSpec.BooleanValue COMMAND_HEAL_ENABLED = BUILDER
+            .comment("Enables or disables the /heal command")
+            .define("commands.heal.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_HEAL_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /heal. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.heal.permission_level", 1, 0, 4);
+
+    public static final ForgeConfigSpec.BooleanValue COMMAND_TRASH_ENABLED = BUILDER
+            .comment("Enables or disables the /trash command")
+            .define("commands.trash.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_TRASH_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /trash. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.trash.permission_level", 0, 0, 4);
+
+    public static final ForgeConfigSpec.BooleanValue COMMAND_FREEZE_ENABLED = BUILDER
+            .comment("Enables or disables the /freeze command")
+            .define("commands.freeze.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_FREEZE_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /freeze. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.freeze.permission_level", 2, 0, 4);
+
+    public static final ForgeConfigSpec.BooleanValue COMMAND_MUTE_ENABLED = BUILDER
+            .comment("Enables or disables the /mute command")
+            .define("commands.mute.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_MUTE_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /mute. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.mute.permission_level", 2, 0, 4);
+
+    public static final ForgeConfigSpec.BooleanValue COMMAND_IGNORE_ENABLED = BUILDER
+            .comment("Enables or disables the /ignore command")
+            .define("commands.ignore.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_IGNORE_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /ignore. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.ignore.permission_level", 0, 0, 4);
+
+    public static final ForgeConfigSpec.BooleanValue COMMAND_AFK_ENABLED = BUILDER
+            .comment("Enables or disables the /afk command")
+            .define("commands.afk.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_AFK_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /afk. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.afk.permission_level", 0, 0, 4);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
-
-    public static boolean logDirtBlock;
-    public static int magicNumber;
-    public static String magicNumberIntroduction;
-    public static Set<Item> items;
-
-    private static boolean validateItemName(final Object obj)
-    {
-        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(ResourceLocation.parse(itemName));
-    }
-
-    @SubscribeEvent
-    static void onLoad(final ModConfigEvent event)
-    {
-        logDirtBlock = LOG_DIRT_BLOCK.get();
-        magicNumber = MAGIC_NUMBER.get();
-        magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
-
-        // convert the list of strings into a set of items
-        items = ITEM_STRINGS.get().stream()
-                .map(itemName -> ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(itemName)))
-                .collect(Collectors.toSet());
-    }
 }

@@ -12,7 +12,7 @@ import java.util.Collection;
 public class FreezeCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("freeze")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_FREEZE_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .executes(context -> {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
@@ -31,7 +31,7 @@ public class FreezeCommand {
         );
 
         dispatcher.register(Commands.literal("unfreeze")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.hasPermission(Config.COMMAND_FREEZE_PERMISSION_LEVEL.get()))
                 .then(Commands.argument("alvos", EntityArgument.players())
                         .executes(context -> {
                             Collection<ServerPlayer> players = EntityArgument.getPlayers(context, "alvos");
