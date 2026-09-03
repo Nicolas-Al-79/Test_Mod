@@ -19,7 +19,7 @@ public class IgnoreManager {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File FOLDER = FMLPaths.CONFIGDIR.get().resolve(ExampleMod.MODID).toFile();
-    private static final File FILE = new File("ignored_players.json");
+    private static final File FILE = new File(FOLDER,"ignored_players.json");
 
     public static void ignore(UUID uuid) {
         IGNORED_PLAYERS.add(uuid.toString());

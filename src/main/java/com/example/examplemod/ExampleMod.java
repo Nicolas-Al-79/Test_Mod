@@ -30,7 +30,7 @@ public class ExampleMod
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
-        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC, MODID + "/mod_de_teste-common.toml");
     }
 
     private static Path worldDataFolder;
