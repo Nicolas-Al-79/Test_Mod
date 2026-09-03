@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.SimpleContainer;
+import org.jetbrains.annotations.NotNull;
 
 public class InvseeContainer implements Container {
 
@@ -82,7 +83,7 @@ public class InvseeContainer implements Container {
     }
 
     @Override
-    public ItemStack getItem(int slot) {
+    public @NotNull ItemStack getItem(int slot) {
 
         if (isReserveSlot(slot)) {
             return reserveSlots.getItem(slot - 5);
@@ -98,7 +99,7 @@ public class InvseeContainer implements Container {
     }
 
     @Override
-    public ItemStack removeItem(int slot, int amount) {
+    public @NotNull ItemStack removeItem(int slot, int amount) {
 
         if (isReserveSlot(slot)) {
             return reserveSlots.removeItem(slot - 5, amount);
@@ -119,7 +120,7 @@ public class InvseeContainer implements Container {
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int slot) {
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
 
         if (isReserveSlot(slot)) {
             return reserveSlots.removeItemNoUpdate(slot - 5);
@@ -135,7 +136,7 @@ public class InvseeContainer implements Container {
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
 
         if (isReserveSlot(slot)) {
             reserveSlots.setItem(slot - 5, stack);
@@ -159,7 +160,7 @@ public class InvseeContainer implements Container {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
 
         /*
          * O menu permanece aberto enquanto
@@ -171,7 +172,7 @@ public class InvseeContainer implements Container {
     }
 
     @Override
-    public boolean canPlaceItem(int slot, ItemStack stack) {
+    public boolean canPlaceItem(int slot, @NotNull ItemStack stack) {
         if (isReserveSlot(slot)) {
             return false;
         }
@@ -199,5 +200,9 @@ public class InvseeContainer implements Container {
 
     private boolean isReserveSlot(int slot) {
         return slot >= 5 && slot <= 8;
+    }
+
+    public boolean isTarget(Player player) {
+        return target.getUUID().equals(player.getUUID());
     }
 }

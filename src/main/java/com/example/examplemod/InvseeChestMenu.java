@@ -9,8 +9,11 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class InvseeChestMenu extends AbstractContainerMenu {
+
+    private final boolean viewingSelf;
 
     private static final int CONTAINER_ROWS = 5;
     private static final int CONTAINER_SIZE = 45;
@@ -20,16 +23,16 @@ public class InvseeChestMenu extends AbstractContainerMenu {
 
     private final Container container;
 
-    public InvseeChestMenu(
-            int containerId,
-            Inventory playerInventory,
-            Container container
-    ) {
+    public InvseeChestMenu(int containerId, Inventory playerInventory, Container container) {
         super(MenuType.GENERIC_9x5, containerId);
 
         checkContainerSize(container, CONTAINER_SIZE);
 
         this.container = container;
+
+        this.viewingSelf =
+                container instanceof InvseeContainer invseeContainer
+                        && invseeContainer.isTarget(playerInventory.player);
 
         container.startOpen(playerInventory.player);
 
@@ -55,7 +58,7 @@ public class InvseeChestMenu extends AbstractContainerMenu {
                     };
                     addSlot(new Slot(container, index, x, y) {
                         @Override
-                        public boolean mayPlace(ItemStack stack) {
+                        public boolean mayPlace(@NotNull ItemStack stack) {
                             return stack.canEquip(equipmentSlot, playerInventory.player);
                         }
                     });
@@ -66,12 +69,12 @@ public class InvseeChestMenu extends AbstractContainerMenu {
                     addSlot(new Slot(container, index, x, y) {
 
                         @Override
-                        public boolean mayPlace(ItemStack stack) {
+                        public boolean mayPlace(@NotNull ItemStack stack) {
                             return false;
                         }
 
                         @Override
-                        public boolean mayPickup(Player player) {
+                        public boolean mayPickup(@NotNull Player player) {
                             return false;
                         }
                     });
@@ -124,17 +127,12 @@ public class InvseeChestMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return container.stillValid(player);
     }
 
     @Override
-    public void clicked(
-            int slotId,
-            int button,
-            ClickType clickType,
-            Player player
-    ) {
+    public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player player) {
 
         /*
          * Ignora completamente qualquer clique
@@ -153,16 +151,15 @@ public class InvseeChestMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(
-            Player player,
-            int index
-    ) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
 
-        ItemStack result = ItemStack.EMPTY;
+        if (viewingSelf) {
+            return ItemStack.EMPTY;
+        }
 
         Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.hasItem()) {
+        if (!slot.hasItem()) {
             return ItemStack.EMPTY;
         }
 
@@ -177,7 +174,7 @@ public class InvseeChestMenu extends AbstractContainerMenu {
         }
 
         ItemStack stack = slot.getItem();
-        result = stack.copy();
+        ItemStack result = stack.copy();
 
         if (index < CONTAINER_SIZE) {
 
@@ -233,7 +230,7 @@ public class InvseeChestMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void removed(Player player) {
+    public void removed(@NotNull Player player) {
         super.removed(player);
 
         container.stopOpen(player);
