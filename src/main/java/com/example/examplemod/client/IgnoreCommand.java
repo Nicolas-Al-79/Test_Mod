@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.example.examplemod.client;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;

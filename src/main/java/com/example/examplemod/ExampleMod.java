@@ -1,5 +1,8 @@
 package com.example.examplemod;
 
+import com.example.examplemod.command.*;
+import com.example.examplemod.invsee.InvseeCommand;
+import com.example.examplemod.manager.ForbiddenItemsManager;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

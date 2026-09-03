@@ -1,5 +1,7 @@
-package com.example.examplemod;
+package com.example.examplemod.command;
 
+import com.example.examplemod.Config;
+import com.example.examplemod.manager.ForbiddenItemsManager;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;

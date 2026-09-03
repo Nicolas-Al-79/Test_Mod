@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.example.examplemod.invsee;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;

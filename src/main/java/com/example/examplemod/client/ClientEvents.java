@@ -1,5 +1,7 @@
-package com.example.examplemod;
+package com.example.examplemod.client;
 
+import com.example.examplemod.Config;
+import com.example.examplemod.ExampleMod;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;

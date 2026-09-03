@@ -1,5 +1,8 @@
-package com.example.examplemod;
+package com.example.examplemod.event;
 
+import com.example.examplemod.manager.AFKManager;
+import com.example.examplemod.manager.ForbiddenItemsManager;
+import com.example.examplemod.manager.PunishmentManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;

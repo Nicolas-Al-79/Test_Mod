@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.example.examplemod.manager;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
