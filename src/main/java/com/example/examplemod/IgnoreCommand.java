@@ -2,6 +2,8 @@ package com.example.examplemod;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -9,15 +11,19 @@ import net.minecraft.network.chat.Component;
 public class IgnoreCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("ignore")
-                .requires(source -> source.hasPermission(Config.COMMAND_IGNORE_PERMISSION_LEVEL.get()))
-                .then(Commands.argument("jogador", StringArgumentType.string())
+                .then(Commands.argument("player", StringArgumentType.word())
                         .executes(context -> {
-                            String playerName = StringArgumentType.getString(context, "jogador");
+                            String name = StringArgumentType.getString(context, "player");
+                            PlayerInfo target = findPlayer(name);
+                            if (target == null) {
+                                sendMessage(Component.literal("Player not found."));
+                                return 0;
+                            }
 
-                            IgnoreManager.setIgnored(playerName, true);
+                            IgnoreManager.ignore(target.getProfile().getId());
 
-                            context.getSource().sendSuccess(() ->
-                                Component.translatable("command.mod_de_teste.ignore.ignored", playerName), false);
+                            sendMessage(Component.translatable("command.mod_de_teste.ignore.ignored",
+                                    target.getProfile().getName()));
 
                             return 1;
                         })
@@ -25,19 +31,42 @@ public class IgnoreCommand {
         );
 
         dispatcher.register(Commands.literal("unignore")
-                .requires(source -> source.hasPermission(Config.COMMAND_IGNORE_PERMISSION_LEVEL.get()))
-                .then(Commands.argument("jogador", StringArgumentType.string())
+                .then(Commands.argument("player", StringArgumentType.word())
                         .executes(context -> {
-                            String playerName = StringArgumentType.getString(context, "jogador");
+                            String name = StringArgumentType.getString(context, "player");
+                            PlayerInfo target = findPlayer(name);
+                            if (target == null) {
+                                sendMessage(Component.literal("Player not found."));
+                                return 0;
+                            }
 
-                            IgnoreManager.setIgnored(playerName, false);
+                            IgnoreManager.unignore(target.getProfile().getId());
 
-                            context.getSource().sendSuccess(() ->
-                                Component.translatable("command.mod_de_teste.ignore.unignored", playerName), false);
+                            sendMessage(Component.translatable("command.mod_de_teste.ignore.unignored",
+                                    target.getProfile().getName()));
 
                             return 1;
                         })
                 )
         );
+    }
+
+    private static PlayerInfo findPlayer(String name) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.getConnection() == null) {
+            return null;
+        }
+        for (PlayerInfo player : minecraft.getConnection().getOnlinePlayers()) {
+            if (player.getProfile().getName().equalsIgnoreCase(name)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    private static void sendMessage(Component message) {
+        if (Minecraft.getInstance().player != null) {
+            Minecraft.getInstance().player.sendSystemMessage(message);
+        }
     }
 }

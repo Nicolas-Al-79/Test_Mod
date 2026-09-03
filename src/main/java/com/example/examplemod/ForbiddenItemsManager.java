@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
@@ -24,9 +23,14 @@ public class ForbiddenItemsManager {
 
     // O GSON é a ferramenta do Google (já inclusa no Minecraft) para transformar código em texto JSON
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    
-    // O arquivo vai ficar salvo na pasta 'config' do servidor/jogo
-    private static final File FILE = FMLPaths.CONFIGDIR.get().resolve("itens_proibidos.json").toFile();
+
+    // Arquivo salvo dentro da pasta do mundo
+    private static File getFile() {
+        return ExampleMod
+                .getWorldDataFolder()
+                .resolve("forbidden_items.json")
+                .toFile();
+    }
 
     public static void forbidItem(UUID playerUUID, Item item) {
         ResourceLocation key = ForgeRegistries.ITEMS.getKey(item);
@@ -60,27 +64,38 @@ public class ForbiddenItemsManager {
 
     // Metodo para salvar os dados no arquivo
     public static void save() {
-        try (FileWriter writer = new FileWriter(FILE)) {
+        File file = getFile();
+
+        try (FileWriter writer = new FileWriter(file)) {
             GSON.toJson(FORBIDDEN_ITEMS, writer);
         } catch (Exception e) {
-            System.out.println("Erro ao salvar itens_proibidos.json: " + e.getMessage());
+            System.out.println(
+                    "Error to save forbidden_items.json: "
+                            + e.getMessage()
+            );
         }
     }
 
     // Metodo para ler os dados do arquivo
     public static void load() {
-        if (FILE.exists()) {
-            try (FileReader reader = new FileReader(FILE)) {
-                Type type = new TypeToken<Map<UUID, Set<String>>>() {}.getType();
-                Map<UUID, Set<String>> data = GSON.fromJson(reader, type);
-                
-                if (data != null) {
-                    FORBIDDEN_ITEMS.clear();
-                    FORBIDDEN_ITEMS.putAll(data);
-                }
-            } catch (Exception e) {
-                System.out.println("Erro ao carregar itens_proibidos.json: " + e.getMessage());
+        FORBIDDEN_ITEMS.clear();
+
+        File file = getFile();
+
+        if (!file.exists()) {
+            return;
+        }
+
+        try (FileReader reader = new FileReader(file)) {
+            Type type = new TypeToken<Map<UUID, Set<String>>>() {}.getType();
+            Map<UUID, Set<String>> data = GSON.fromJson(reader, type);
+            if (data != null) {
+                FORBIDDEN_ITEMS.putAll(data);
             }
+        } catch (Exception e) {
+            System.out.println(
+                    "Error to load forbidden_items.json: " + e.getMessage()
+            );
         }
     }
 }

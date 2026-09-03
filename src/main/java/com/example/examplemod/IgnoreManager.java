@@ -11,45 +11,59 @@ import java.io.FileWriter;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class IgnoreManager {
     // Lista de nomes de jogadores ignorados localmente
     public static final Set<String> IGNORED_PLAYERS = new HashSet<>();
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File FILE = FMLPaths.CONFIGDIR.get().resolve("jogadores_ignorados.json").toFile();
+    private static final File FOLDER = FMLPaths.CONFIGDIR.get().resolve(ExampleMod.MODID).toFile();
+    private static final File FILE = new File("ignored_players.json");
 
-    public static void setIgnored(String playerName, boolean ignore) {
-        if (ignore) IGNORED_PLAYERS.add(playerName.toLowerCase());
-        else IGNORED_PLAYERS.remove(playerName.toLowerCase());
+    public static void ignore(UUID uuid) {
+        IGNORED_PLAYERS.add(uuid.toString());
         save();
     }
 
-    public static boolean isIgnored(String playerName) {
-        return IGNORED_PLAYERS.contains(playerName.toLowerCase());
+    public static void unignore(UUID uuid) {
+        IGNORED_PLAYERS.remove(uuid.toString());
+        save();
+    }
+
+    public static boolean isIgnored(UUID uuid) {
+        return IGNORED_PLAYERS.contains(uuid.toString());
     }
 
     public static void save() {
+        if (!FOLDER.exists() && !FOLDER.mkdirs()) {
+            System.out.println("Not possible to create the folder " + FOLDER.getAbsolutePath());
+            return;
+        }
         try (FileWriter writer = new FileWriter(FILE)) {
             GSON.toJson(IGNORED_PLAYERS, writer);
         } catch (Exception e) {
-            System.out.println("Erro ao salvar jogadores_ignorados.json: " + e.getMessage());
+            System.out.println("Error to save ignored_players.json: " + e.getMessage());
         }
     }
 
     public static void load() {
-        if (FILE.exists()) {
-            try (FileReader reader = new FileReader(FILE)) {
-                Type type = new TypeToken<Set<String>>() {}.getType();
-                Set<String> data = GSON.fromJson(reader, type);
-                
-                if (data != null) {
-                    IGNORED_PLAYERS.clear();
-                    IGNORED_PLAYERS.addAll(data);
-                }
-            } catch (Exception e) {
-                System.out.println("Erro ao carregar jogadores_ignorados.json: " + e.getMessage());
+        IGNORED_PLAYERS.clear();
+
+        if (!FILE.exists()) {
+            return;
+        }
+
+        try (FileReader reader = new FileReader(FILE)) {
+            Type type = new TypeToken<Set<String>>() {}.getType();
+            Set<String> data = GSON.fromJson(reader, type);
+
+            if (data != null) {
+                IGNORED_PLAYERS.addAll(data);
             }
+
+        } catch (Exception e) {
+            System.out.println("Error to load ignored_players.json: " + e.getMessage());
         }
     }
 }

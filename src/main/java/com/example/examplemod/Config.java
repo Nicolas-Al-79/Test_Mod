@@ -64,10 +64,6 @@ public class Config
             .comment("Enables or disables the /ignore command")
             .define("commands.ignore.enabled", true);
 
-    public static final ForgeConfigSpec.IntValue COMMAND_IGNORE_PERMISSION_LEVEL = BUILDER
-            .comment("Permission level required to use /ignore. 0 = any player, 1-4 = operator level")
-            .defineInRange("commands.ignore.permission_level", 0, 0, 4);
-
     public static final ForgeConfigSpec.BooleanValue COMMAND_AFK_ENABLED = BUILDER
             .comment("Enables or disables the /afk command")
             .define("commands.afk.enabled", true);

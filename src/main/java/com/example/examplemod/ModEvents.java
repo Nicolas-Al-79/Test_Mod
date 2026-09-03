@@ -8,7 +8,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -76,17 +75,6 @@ public class ModEvents {
             event.setCanceled(true);
             player.sendSystemMessage(Component.translatable(
                     "command.mod_de_teste.event.muted"));
-        }
-    }
-
-    // Mute Local (Client) - Ignorar
-    @SubscribeEvent
-    public static void onClientChatReceived(ClientChatReceivedEvent event) {
-        for (String ignored : IgnoreManager.IGNORED_PLAYERS) {
-            if (event.getMessage().getString().toLowerCase().contains(ignored.toLowerCase())) {
-                event.setCanceled(true);
-                break;
-            }
         }
     }
 
