@@ -104,5 +104,10 @@ public class ExampleMod
         if (Config.COMMAND_AFK_ENABLED.get()) {
             AFKCommand.register(event.getDispatcher());
         }
+
+        // Invsee
+        if (Config.COMMAND_INVSEE_ENABLED.get()) {
+            InvseeCommand.register(event.getDispatcher());
+        }
     }
 }

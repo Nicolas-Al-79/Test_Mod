@@ -76,5 +76,13 @@ public class Config
             .comment("Permission level required to use /afk. 0 = any player, 1-4 = operator level")
             .defineInRange("commands.afk.permission_level", 0, 0, 4);
 
+    public static final ForgeConfigSpec.BooleanValue COMMAND_INVSEE_ENABLED = BUILDER
+            .comment("Enables or disables the /invsee command")
+            .define("commands.invsee.enabled", true);
+
+    public static final ForgeConfigSpec.IntValue COMMAND_INVSEE_PERMISSION_LEVEL = BUILDER
+            .comment("Permission level required to use /invsee. 0 = any player, 1-4 = operator level")
+            .defineInRange("commands.invsee.permission_level", 2, 0, 4);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 }
